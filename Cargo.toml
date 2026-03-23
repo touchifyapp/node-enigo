@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = "3.0.0"
 napi-derive = "3.0.0"
-enigo = "0.6.1"
+enigo = { version = "0.6.1", features = ["wayland", "xdo", "x11rb"] }
 
 [build-dependencies]
 napi-build = "2"
@@ -19,3 +19,9 @@ napi-build = "2"
 lto = true
 codegen-units = 1
 strip = "symbols"
+
+[package.metadata.cross.target.armv7-unknown-linux-gnueabihf]
+pre-build = [
+    "dpkg --add-architecture $CROSS_DEB_ARCH",
+    "apt-get update && apt-get --assume-yes install libxdo-dev:$CROSS_DEB_ARCH libxkbcommon-dev:$CROSS_DEB_ARCH libxi-dev:$CROSS_DEB_ARCH libxtst-dev:$CROSS_DEB_ARCH",
+]

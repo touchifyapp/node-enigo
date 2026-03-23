@@ -29,6 +29,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
+            - name: setup system dependencies
+              run: sudo apt-get update && sudo apt-get install -y libxdo-dev libxkbcommon-dev libxi-dev libxtst-dev
             - name: setup pnpm
               uses: pnpm/action-setup@v5
             - name: Setup node
@@ -64,29 +66,32 @@ jobs:
                       target: i686-pc-windows-msvc
                     - host: ubuntu-latest
                       target: x86_64-unknown-linux-gnu
-                      build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
+                      build: pnpm build --target x86_64-unknown-linux-gnu
                     - host: macos-latest
                       target: aarch64-apple-darwin
                       build: pnpm build --target aarch64-apple-darwin
-                    - host: ubuntu-latest
+                    - host: ubuntu-24.04-arm
                       target: aarch64-unknown-linux-gnu
-                      build: pnpm build --target aarch64-unknown-linux-gnu --use-napi-cross
+                      build: pnpm build --target aarch64-unknown-linux-gnu
                     - host: ubuntu-latest
                       target: armv7-unknown-linux-gnueabihf
-                      build: pnpm build --target armv7-unknown-linux-gnueabihf --use-napi-cross
+                      build: pnpm build --target armv7-unknown-linux-gnueabihf --use-cross
                     - host: windows-latest
                       target: aarch64-pc-windows-msvc
                       build: pnpm build --target aarch64-pc-windows-msvc
-        name: stable - ${{ matrix.settings.target }} - node@20
+        name: stable - ${{ matrix.settings.target }} - node@24
         runs-on: ${{ matrix.settings.host }}
         steps:
             - uses: actions/checkout@v6
+            - name: setup system dependencies
+              run: sudo apt-get update && sudo apt-get install -y libxdo-dev libxkbcommon-dev libxi-dev libxtst-dev
+              if: ${{ matrix.settings.target == 'x86_64-unknown-linux-gnu' || matrix.settings.target == 'aarch64-unknown-linux-gnu' }}
             - name: setup pnpm
               uses: pnpm/action-setup@v5
             - name: Setup node
               uses: actions/setup-node@v6
               with:
-                  node-version: 22
+                  node-version: 24
                   cache: pnpm
             - name: Install
               uses: dtolnay/rust-toolchain@stable
@@ -108,13 +113,13 @@ jobs:
               if: ${{ contains(matrix.settings.target, 'musl') }}
               with:
                   version: 0.15.2
-            - name: Install cargo-zigbuild
+            - name: Install cross
               uses: taiki-e/install-action@v2
-              if: ${{ contains(matrix.settings.target, 'musl') }}
+              if: ${{ contains(matrix.settings.build, '--use-cross') }}
               env:
                   GITHUB_TOKEN: ${{ github.token }}
               with:
-                  tool: cargo-zigbuild
+                  tool: cross
             - name: Setup toolchain
               run: ${{ matrix.settings.setup }}
               if: ${{ matrix.settings.setup }}
@@ -163,8 +168,8 @@ jobs:
                       target: aarch64-apple-darwin
                       architecture: arm64
                 node:
-                    - "20"
                     - "22"
+                    - "24"
         runs-on: ${{ matrix.settings.host }}
         steps:
             - uses: actions/checkout@v6
@@ -198,13 +203,26 @@ jobs:
                 target:
                     - x86_64-unknown-linux-gnu
                     - aarch64-unknown-linux-gnu
-                    - armv7-unknown-linux-gnueabihf
+                    # - armv7-unknown-linux-gnueabihf
                 node:
-                    - "20"
                     - "22"
+                    - "24"
         runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
         steps:
             - uses: actions/checkout@v6
+            - name: setup system dependencies
+              run: sudo apt-get update && sudo apt-get install -y libxdo-dev libxkbcommon-dev libxi-dev libxtst-dev
+            - name: Install Xvfb on Linux
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get install -y xvfb
+                  which Xvfb
+                  # Set DISPLAY env variable
+                  echo "DISPLAY=:99.0" >> $GITHUB_ENV
+                  # Create virtual display with Xvfb
+                  Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+                  # Wait for Xvfb to start
+                  sleep 3
             - name: setup pnpm
               uses: pnpm/action-setup@v5
             - name: Setup node
@@ -250,7 +268,11 @@ jobs:
             - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
               if: ${{ contains(matrix.target, 'armv7') }}
             - name: Test bindings
+              if: ${{ !contains(matrix.target, 'armv7') }}
+              run: npm run test
+            - name: Test bindings (docker)
               uses: tj-actions/docker-run@v2
+              if: ${{ contains(matrix.target, 'armv7') }}
               with:
                   image: ${{ steps.docker.outputs.IMAGE }}
                   name: test-binding

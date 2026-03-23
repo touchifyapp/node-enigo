@@ -635,5 +635,5 @@ pub fn key_from_string(key: String) -> Result<enigo::Key> {
 fn char_from_string(key: &str) -> Result<char> {
     key.chars()
         .next()
-        .ok_or_else(|| JsError::invalid_input(&key))
+        .ok_or_else(|| JsError::invalid_input(key))
 }

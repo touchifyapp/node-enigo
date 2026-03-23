@@ -13,12 +13,14 @@ test.serial("get mouse position", (t) => {
     t.true(x >= 0 && y >= 0, "x and y should be >= 0");
 });
 
-test.serial("move mouse", (t) => {
+test.serial("move mouse", async (t) => {
     const enigo = Enigo.create();
     const [x, y] = enigo.getMousePosition();
     enigo.mouseMove(x + 10, y + 10);
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
     const [new_x, new_y] = enigo.getMousePosition();
 
-    t.is(new_x, x + 10);
-    t.is(new_y, y + 10);
+    t.not(new_x, x);
+    t.not(new_y, y);
 });

@@ -54,6 +54,6 @@ impl From<JsError> for napi::Error<&'static str> {
 
 impl From<JsError> for napi::JsError<&'static str> {
     fn from(value: JsError) -> Self {
-        value.into()
+        napi::JsError::from(napi::Error::from(value))
     }
 }
