@@ -15,8 +15,8 @@ This library is in an early alpha status, the API will change in in the future.
 - [x] Serialize/Deserialize
 - [x] Linux (X11) mouse
 - [x] Linux (X11) text
-- [ ] Linux (Wayland) mouse (Experimental)
-- [ ] Linux (Wayland) text (Experimental)
+- [x] Linux (Wayland) mouse (Experimental)
+- [x] Linux (Wayland) text (Experimental)
 - [ ] Linux (libei) mouse (Experimental)
 - [ ] Linux (libei) text (Experimental)
 - [x] MacOS mouse
