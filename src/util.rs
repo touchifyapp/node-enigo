@@ -236,9 +236,9 @@ pub fn key_from_string(key: String) -> Result<enigo::Key> {
         #[cfg(target_os = "windows")]
         "DBESChar" | "dbeschar" => Ok(enigo::Key::DBESChar),
         "Decimal" | "decimal" => Ok(enigo::Key::Decimal),
-        "Delete" | "delete" => Ok(enigo::Key::Delete),
+        "Delete" | "delete" | "Suppr" | "suppr" => Ok(enigo::Key::Delete),
         "Divide" | "divide" => Ok(enigo::Key::Divide),
-        "DownArrow" | "downarrow" | "down" => Ok(enigo::Key::DownArrow),
+        "DownArrow" | "downarrow" | "down" | "ArrowDown" | "arrowdown" => Ok(enigo::Key::DownArrow),
         #[cfg(target_os = "macos")]
         "Eject" | "eject" => Ok(enigo::Key::Eject),
         "End" | "end" => Ok(enigo::Key::End),
@@ -420,7 +420,7 @@ pub fn key_from_string(key: String) -> Result<enigo::Key> {
         #[cfg(target_os = "windows")]
         "LButton" | "lbutton" => Ok(enigo::Key::LButton),
         "LControl" | "lcontrol" => Ok(enigo::Key::LControl),
-        "LeftArrow" | "leftarrow" => Ok(enigo::Key::LeftArrow),
+        "LeftArrow" | "leftarrow" | "ArrowLeft" | "arrowleft" => Ok(enigo::Key::LeftArrow),
         #[cfg(all(unix, not(target_os = "macos")))]
         "Linefeed" | "linefeed" => Ok(enigo::Key::Linefeed),
         #[cfg(any(target_os = "windows", all(unix, not(target_os = "macos"))))]
@@ -575,8 +575,8 @@ pub fn key_from_string(key: String) -> Result<enigo::Key> {
         "RControl" | "rcontrol" => Ok(enigo::Key::RControl),
         #[cfg(all(unix, not(target_os = "macos")))]
         "Redo" | "redo" => Ok(enigo::Key::Redo),
-        "Return" | "return" => Ok(enigo::Key::Return),
-        "RightArrow" | "rightarrow" => Ok(enigo::Key::RightArrow),
+        "Return" | "return" | "Enter" | "enter" => Ok(enigo::Key::Return),
+        "RightArrow" | "rightarrow" | "ArrowRight" | "arrowright" => Ok(enigo::Key::RightArrow),
         #[cfg(target_os = "windows")]
         "RMenu" | "rmenu" => Ok(enigo::Key::RMenu),
         #[cfg(target_os = "macos")]
@@ -606,7 +606,7 @@ pub fn key_from_string(key: String) -> Result<enigo::Key> {
         "Tab" | "tab" => Ok(enigo::Key::Tab),
         #[cfg(all(unix, not(target_os = "macos")))]
         "Undo" | "undo" => Ok(enigo::Key::Undo),
-        "UpArrow" | "uparrow" => Ok(enigo::Key::UpArrow),
+        "UpArrow" | "uparrow" | "ArrowUp" | "arrowup" => Ok(enigo::Key::UpArrow),
         #[cfg(target_os = "macos")]
         "VidMirror" | "vidmirror" => Ok(enigo::Key::VidMirror),
         "VolumeDown" | "volumedown" => Ok(enigo::Key::VolumeDown),
