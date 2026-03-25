@@ -1,6 +1,6 @@
 {
   "name": "@touchifyapp/enigo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cross platform input simulation. Node bindings for the enigo crate.",
   "main": "index.js",
   "types": "index.d.ts",
